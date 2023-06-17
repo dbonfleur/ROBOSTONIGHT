@@ -2,6 +2,7 @@ package ROBOSTONIGHT;
 
 import robocode.*;
 import java.awt.Color;
+import java.io.IOException;
 
 public class SapoDeLantejoulas extends TeamRobot
 {
@@ -15,7 +16,11 @@ public class SapoDeLantejoulas extends TeamRobot
 	
 	public void run() {
 		setColors(Color.red, Color.yellow, Color.green);
-		
+		try {
+			broadcastMessage(new RobotReadyMessage());
+		} catch (IOException e) {
+    			// Tratar a exceção de alguma forma
+		}
 		while(true) {
 		
 			evitarBorda();
@@ -53,10 +58,24 @@ public class SapoDeLantejoulas extends TeamRobot
         return 1;
         
     }
+	
+	public void onMessageReceived(MessageEvent event) {
+        // Processa as mensagens recebidas pelos outros robôs da equipe
+        if (event.getMessage() instanceof EnemyScannedMessage) {
+            EnemyScannedMessage message = (EnemyScannedMessage) event.getMessage();
+            String enemyName = message.getEnemyName();
+            double enemyDistance = message.getEnemyDistance();
+            double enemyBearing = message.getEnemyBearing();
+
+            // Faça algo com as informações recebidas, como ajustar a estratégia de combate
+            // com base no inimigo escaneado pelos outros robôs da equipe
+        }
+    }
 
     public void onScannedRobot(ScannedRobotEvent e) {
         // Verifica se o robô detectado é o BorderGuard
         if (!e.isSentryRobot() && !isTeammate(e.getName())) {
+   
             // Calcula a distância do robô inimigo
             double enemyDistance = e.getDistance();
             // Ajusta a mira para o robô inimigo
@@ -106,4 +125,33 @@ public class SapoDeLantejoulas extends TeamRobot
             ahead(100);
         }
     }	
+}
+
+class EnemyScannedMessage implements java.io.Serializable {
+    private String enemyName;
+    private double enemyDistance;
+    private double enemyBearing;
+
+    public EnemyScannedMessage(String enemyName, double enemyDistance, double enemyBearing) {
+        this.enemyName = enemyName;
+        this.enemyDistance = enemyDistance;
+        this.enemyBearing = enemyBearing;
+    }
+
+    public String getEnemyName() {
+        return enemyName;
+    }
+
+    public double getEnemyDistance() {
+        return enemyDistance;
+    }
+
+    public double getEnemyBearing() {
+        return enemyBearing;
+    }
+}
+
+// Classe para representar uma mensagem informando que o robô está pronto para a batalha
+class RobotReadyMessage implements java.io.Serializable {
+    // Pode ser vazia, pois não é necessário enviar informações adicionais
 }
