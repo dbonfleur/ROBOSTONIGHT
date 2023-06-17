@@ -3,26 +3,22 @@ package ROBOSTONIGHT;
 import robocode.*;
 import java.awt.Color;
 
-public class VugnaesSreo extends TeamRobot {
-
-    private final double TAMANHO_MAPA = 1000;
+public class SapoDeLantejoulas extends TeamRobot
+{
+	 private final double TAMANHO_MAPA = 1000;
     private final double MARGEM = 300;
     private boolean isMovingForward = true;
 
     public boolean getIntRandom(int max) {
         return Math.floor(Math.random() * max) == 0;
     }
-    /** 
-     * run: VugnaesSreo's default behavior
-     */
-    public void run() {
-        // Configuração inicial do robô
-        setColors(Color.red, Color.yellow, Color.green); // Define as cores do corpo, arma e radar
-
-        // Loop principal do robô
-        while (true) {
-            //Verifica se estamos perto do BorderGuard e toma a ação apropriada
-            evitarBorda();
+	
+	public void run() {
+		setColors(Color.red, Color.yellow, Color.green);
+		
+		while(true) {
+		
+			evitarBorda();
             
             if (getIntRandom(2)) {
                 turnRight(Math.random() * 45);
@@ -32,19 +28,15 @@ public class VugnaesSreo extends TeamRobot {
                 back(100);
             }
             
-            // Gira a arma em um ângulo aleatório
             turnGunRight(Math.random() * 360);
 
-            // Verifica se há um robô inimigo próximo
             turnRadarRight(360);
             scan();
-        }
-    }
+		}
+	}
 
-    private double calculateFirePower(double distance) {
+	private double calculateFirePower(double distance) {
         double maxDistance = Math.max(getBattleFieldWidth(), getBattleFieldHeight());
-        
-        // Ajusta a potência com base na distância
         
         if(getEnergy() <= 10){
             return 1;
@@ -62,10 +54,6 @@ public class VugnaesSreo extends TeamRobot {
         
     }
 
-    /**
-     * onScannedRobot: O que fazer quando um robô inimigo é detectado
-     */
-    
     public void onScannedRobot(ScannedRobotEvent e) {
         // Verifica se o robô detectado é o BorderGuard
         if (!e.isSentryRobot() && !isTeammate(e.getName())) {
@@ -79,7 +67,7 @@ public class VugnaesSreo extends TeamRobot {
             double firePower = calculateFirePower(enemyDistance);
             // Atira no robô inimigo com a potência calculada
             fire(firePower);
-        }
+        }  
     }
 
     private double normalizeBearing(double angle) {
@@ -94,7 +82,7 @@ public class VugnaesSreo extends TeamRobot {
 
     public void onHitByBullet(HitByBulletEvent e) {
         double bearingToCenter = normalizeBearing(getHeading() - e.getBearingRadians());
-        double deviation = 30;
+        double deviation = 30; 
 
         if (bearingToCenter > 0) {
             turnRight(bearingToCenter - deviation);
@@ -111,11 +99,11 @@ public class VugnaesSreo extends TeamRobot {
         double y = getY();
         
         if (x < MARGEM || x > TAMANHO_MAPA - MARGEM || y < MARGEM || y > TAMANHO_MAPA - MARGEM) {
-            
+			
             double angulo = Math.toDegrees(Math.atan2(500 - x, 500 - y));
             
             turnRight(angulo - getHeading());
             ahead(100);
         }
-    }
+    }	
 }
